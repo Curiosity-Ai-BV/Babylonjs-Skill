@@ -23,6 +23,8 @@ The GitHub source for all docs is at `https://github.com/BabylonJS/Documentation
   - Thin instances: `/features/featuresDeepDive/mesh/copies/thinInstances`
   - Clones: `/features/featuresDeepDive/mesh/copies/clones`
 - Merging: `/features/featuresDeepDive/mesh/mergeMeshes`
+- CSG (legacy): `/features/featuresDeepDive/mesh/copies/csg`
+- CSG2 (Manifold, Babylon 8+): `/features/featuresDeepDive/mesh/copies/csgPart1`
 - Interactions/picking: `/features/featuresDeepDive/mesh/interactions`
 - Gizmos: `/features/featuresDeepDive/mesh/gizmo`
 - Node Geometry: `/features/featuresDeepDive/mesh/nodeGeometry`

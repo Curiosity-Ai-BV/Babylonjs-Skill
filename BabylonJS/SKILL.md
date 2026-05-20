@@ -1,6 +1,6 @@
 ---
 name: babylonjs
-description: "Babylon.js 8 3D engine development expertise with curated API patterns, code examples, and on-demand documentation access. Use when working with Babylon.js scenes, meshes, materials (PBR/Standard), cameras, lights, shadows, GUI (2D/3D), animations, physics (Havok), thin instances, glTF loading, post-processing, WebXR, or any 3D rendering task. Covers: (1) Scene setup and engine initialization (WebGL/WebGPU), (2) Mesh creation, transforms, instancing, and merging, (3) PBR and Standard materials with textures, (4) Camera types (ArcRotate, Universal, Follow), (5) Lighting and shadows, (6) 2D/3D GUI with AdvancedDynamicTexture, (7) Animation system and animation groups, (8) Asset loading (glTF, OBJ, STL), (9) Performance optimization and profiling, (10) ASRS/warehouse digital twin visualization patterns."
+description: "Babylon.js 8 3D engine development expertise with curated API patterns, code examples, and on-demand documentation access. Use when working with Babylon.js scenes, meshes, materials (PBR/Standard), cameras, lights, shadows, GUI (2D/3D), animations, physics (Havok), thin instances, glTF loading, post-processing, WebXR, procedural/code-built 3D models, or any 3D rendering task. Covers: (1) Scene setup and engine initialization (WebGL/WebGPU), (2) Mesh creation, transforms, instancing, and merging, (3) PBR and Standard materials with textures, (4) Camera types (ArcRotate, Universal, Follow), (5) Lighting and shadows, (6) 2D/3D GUI with AdvancedDynamicTexture, (7) Animation system and animation groups, (8) Asset loading (glTF, OBJ, STL), (9) Performance optimization and profiling, (10) ASRS/warehouse digital twin visualization patterns, (11) Procedural modeling: building high-quality 3D models from primitives with animation-ready parent/pivot hierarchies, CSG2 booleans, lathes, extrudes, and custom VertexData."
 ---
 
 # Babylon.js 8
@@ -98,13 +98,26 @@ const observer = scene.onPointerObservable.add((info) => { /* pointer events */ 
 scene.onPointerObservable.remove(observer); // unsubscribe
 ```
 
+### Procedural Modeling — Animation-Ready Hierarchy
+Build complex models from primitives by placing a `TransformNode` at every joint *before* attaching geometry. One pivot per degree of freedom; geometry's local position is its offset from the joint.
+```typescript
+const robotRoot = new TransformNode("robotRoot", scene);
+const shoulderPivot = new TransformNode("shoulderPivot", scene);
+shoulderPivot.parent = robotRoot;                  // pivot lives at the joint axis
+const upperArm = CreateCapsule("upperArm", { height: 1.2, radius: 0.16 }, scene);
+upperArm.parent = shoulderPivot;
+upperArm.position.y = 0.6;                          // geometry sticks out from joint
+// Animation later: shoulderPivot.rotation.y = ...  // rotates whole arm cleanly
+```
+For booleans (drilled holes, carved slots), use **CSG2** (Babylon 8). For rotationally symmetric parts (bottles, hubs, columns) use `CreateLathe`. For path-swept parts (cables, rails) use `CreateTube` or `ExtrudeShape`. See [procedural-parametric-modeling.md](references/procedural-parametric-modeling
+
 ## Reference Files
 
 Read these files for detailed API patterns on specific topics:
 
 - **[core-concepts.md](references/core-concepts.md)** - Engine/Scene setup, cameras, lights, shadows, observables, coordinate system
 - **[meshes.md](references/meshes.md)** - Mesh builders, transforms, TransformNode, instances, thin instances, clones, merging, picking
-- **[parametric-factories.md](references/parametric-factories.md)** - Pattern for parametric meshes composed from primitives: factory shape, PROPORTIONS tables, Dims, shared material factory, ExtrudePolygon for non-box cross-sections, template caching, thin-instance templates
+- **[procedural-parametric-modeling.md](references/procedural-parametric-modeling.md)** - Building high-quality 3D models in code from primitives. Full primitive catalog (lathe, tube, extrude, polyhedra, geodesics, CSG2 booleans, custom VertexData), quality techniques (tessellation, bevels, edges, material palettes), and a complete animation-ready parent/pivot hierarchy pattern with a worked robot-arm example. **Read this when asked to build any non-trivial model in code or when a model will need to animate.**
 - **[materials.md](references/materials.md)** - PBR, Standard, textures, environment/HDR, Node Material, Shader Material
 - **[gui.md](references/gui.md)** - AdvancedDynamicTexture, all control types, containers, layout, events
 - **[animation-loading.md](references/animation-loading.md)** - Animation API, groups, easing, skeletal animation, asset loading, AssetContainer
@@ -142,3 +155,6 @@ To fetch a specific topic, read the URL map to find the path, then use WebFetch 
 6. **Left-handed coordinates:** glTF is right-handed; Babylon auto-converts on import. Manual coordinate math may need adjustment.
 7. **Alpha sorting:** Transparent meshes require proper render ordering. Use `mesh.alphaIndex` or rendering groups.
 8. **Thin instance limitations:** All-or-nothing visibility, single bounding box, no per-instance material. Use regular instances when individual control is needed.
+9. **Pivot before geometry:** When code-building animated models, create and parent the joint's `TransformNode` first, then attach geometry as a child with a local offset. Retro-fitting pivots after `MergeMeshes` is painful — merge only after the hierarchy works.
+10. **CSG2 setup:** Babylon 8's `CSG2` (boolean ops backed by Manifold) requires `await InitializeCSG2Async()` once before use and operates in world space. Always dispose intermediate `CSG2.FromMesh` objects — they hold WASM memory.
+11. **Negative scaling flips winding:** Mirroring a hierarchy via `scaling.x *= -1` inverts triangle winding and breaks backface culling. Fix with `material.sideOrientation = Mesh.DOUBLESIDE` or rebake.
