@@ -104,6 +104,7 @@ Read these files for detailed API patterns on specific topics:
 
 - **[core-concepts.md](references/core-concepts.md)** - Engine/Scene setup, cameras, lights, shadows, observables, coordinate system
 - **[meshes.md](references/meshes.md)** - Mesh builders, transforms, TransformNode, instances, thin instances, clones, merging, picking
+- **[parametric-factories.md](references/parametric-factories.md)** - Pattern for parametric meshes composed from primitives: factory shape, PROPORTIONS tables, Dims, shared material factory, ExtrudePolygon for non-box cross-sections, template caching, thin-instance templates
 - **[materials.md](references/materials.md)** - PBR, Standard, textures, environment/HDR, Node Material, Shader Material
 - **[gui.md](references/gui.md)** - AdvancedDynamicTexture, all control types, containers, layout, events
 - **[animation-loading.md](references/animation-loading.md)** - Animation API, groups, easing, skeletal animation, asset loading, AssetContainer

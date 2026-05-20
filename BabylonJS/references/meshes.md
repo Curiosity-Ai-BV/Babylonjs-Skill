@@ -221,6 +221,8 @@ const merged = Mesh.MergeMeshes(
 );
 ```
 
+For composing many primitives into a reusable **parametric template** (a shuttle, a chassis, a lipped post — anything that varies by size and repeats hundreds to millions of times), see **[parametric-factories.md](parametric-factories.md)**. It covers PROPORTIONS tables, `Dims`, shared material factories, `ExtrudePolygon` for non-box cross-sections, template caching, and thin-instance templates.
+
 ## Picking & Raycasting
 
 ```typescript
